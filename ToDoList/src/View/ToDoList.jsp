@@ -23,7 +23,7 @@
 
           <div id="ListTitle" hidden>
           <input type="text" id="TitleInput" />
-          <input id="SubmitButton" class="ListAddButton" type="button" value="Add" ><br>
+          <input id="ListAddButton" class="ListAddButton" type="button" value="Add" ><br>
 
           </div>
         <br>
@@ -41,17 +41,17 @@
      int pages_num = 0;
      int size = 0;
 
-     if((lists.keySet().size())%9 == 0 )
-       pages_num = (lists.keySet().size())/9;
+     if((lists.keySet().size())%18 == 0 )
+       pages_num = (lists.keySet().size())/18;
      else
-       pages_num = (lists.keySet().size())/9 + 1;
+       pages_num = (lists.keySet().size())/18 + 1;
 
 
       if(pages_num == 1)
          size = lists.keySet().size();
 
       else
-         size = 16;
+         size = 18;
 
 
       if(lists.size()!=0){
@@ -71,10 +71,17 @@
             %>
               <ul class="product-wrapper">
 
-                <li id="<%=listKeys.get(j)%>Title"> <%=listKeys.get(j)%> 
-                <input type="button" class="button" id="<%=listKeys.get(j)%>OpenButton" value="Open"/> 
-                <input type="button" class="button" id="<%=listKeys.get(j)%>DeleteButton" value="Delete"/>  
-                <input type="button" class="button"  id="<%=listKeys.get(j)%>AddButton" value="Add"/>
+                <li id="<%=j%>Title"> <%=listKeys.get(j)%> 
+                <input type="button" class="button" id="<%=j%>OpenButton" value="Open" onclick="showList(<%=j%>)" /> 
+                <input type="button" class="button" id="<%=j%>ListDeleteButton" value="Delete" onclick="DeleteList(<%=j%>)"/>
+                <input type="button" class="button" id="<%=j%>AddButton" value="Add" onclick="showAddSubList(<%=j%>)"/>
+
+                <div id="<%=j%>SubText" hidden>
+                  <input type="text" id="<%=j%>SubTextInput" />
+                  <input id="<%=j%>SubAddButton" class="ListAddButton" type="button" value="Submit" onclick="addSubList(<%=j%>)"><br>  
+                </div>
+                <div id="<%=j%>SubLists" hidden>
+
                   <ul>
                     <%
                      ArrayList<String> sub = lists.get(listKeys.get(j));
@@ -82,6 +89,8 @@
                       for(int k = 0; k < sub.size(); k++){
                     %>
                         <li id="<%=k%>Sub"> <%=sub.get(k)%> </li>
+                        <input type="button" class="button" id="<%=k%>SubDeleteButton" value="Delete" onclick="DeleteSubList(<%=j%>, <%=k%>)"/>  
+
 
                       <%
                       }
@@ -90,6 +99,7 @@
                     }
                     %>
                   </ul>
+                </div>
                 </li>
               </ul>
             <%
@@ -98,9 +108,9 @@
          </div>
           <%
           if(i == pages_num-2)
-            size+= lists.keySet().size() - (pages_num-1)*9;
+            size+= lists.keySet().size() - (pages_num-1)*18;
           else
-            size+=9;
+            size+=18;
         }
 
       }else{
@@ -111,7 +121,7 @@
 
 <%if(pages_num > 1){%>
 <div class="Pbutton">
-          <input type="button" class="Pbutton1" id="PButton" value="Previous" />    <input type="button" class="Pbutton2" id="NButton" value="Next" />
+          <input type="button" class="Pbutton1" id="PButton" value="Previous" onclick="Prev()"/>    <input type="button" class="Pbutton2" id="NButton" value="Next" onclick="Next()" />
 
 </div>
 <%}%>

@@ -37,20 +37,15 @@ public class ToDoList {
 
         ArrayList<Integer> UserListIds = usersLists.get(user);
 
-        if(UserListIds.contains(id)){
-            if(lists.containsKey(id)){
-                ArrayList<String> subs = lists.get(id);
+            if(lists.containsKey(UserListIds.get(id))){
+                ArrayList<String> subs = lists.get(UserListIds.get(id));
                 if(!subs.contains(sublist)) {
                     subs.add(sublist);
-                    lists.put(id, subs);
+                    lists.put(UserListIds.get(id), subs);
                 }
                 else
                     return false;
             }
-        }
-
-        else
-            return false;
 
         return true;
     }

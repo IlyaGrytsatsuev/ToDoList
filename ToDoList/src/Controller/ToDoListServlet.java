@@ -4,6 +4,7 @@ import Model.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
+import javax.servlet.http.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +31,7 @@ public class ToDoListServlet extends HttpServlet{
         }
     }
 
-   /* protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
         try {
             list.readFile();
@@ -42,13 +42,43 @@ public class ToDoListServlet extends HttpServlet{
                 session.setMaxInactiveInterval(30*60);
                 String name = (String)session.getAttribute("name");
                 String title = request.getParameter("title");
+                list.addList(name, title);
+                list.writeFile();
+            }
 
+            if(state.equals("DeleteList")){
+                HttpSession session = request.getSession();
+                session.setMaxInactiveInterval(30*60);
+                String name = (String)session.getAttribute("name");
+                int id = Integer.parseInt(request.getParameter("id"));
+                list.delete(name, id, -1);
+                list.writeFile();
+            }
+
+            if(state.equals("addSubList")){
+                HttpSession session = request.getSession();
+                session.setMaxInactiveInterval(30*60);
+                String name = (String)session.getAttribute("name");
+                int id = Integer.parseInt(request.getParameter("id"));
+                String title = request.getParameter("title");
+                list.addSub(name, id, title);
+                list.writeFile();
+            }
+
+            if(state.equals("deleteSubList")){
+                HttpSession session = request.getSession();
+                session.setMaxInactiveInterval(30*60);
+                String name = (String)session.getAttribute("name");
+                int titleId = Integer.parseInt(request.getParameter("titleId"));
+                int subId = Integer.parseInt(request.getParameter("subId"));
+                list.delete(name, titleId, subId);
+                list.writeFile();
             }
         }
         catch(Exception e){
             e.printStackTrace();
         }
-    }*/
+    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
 

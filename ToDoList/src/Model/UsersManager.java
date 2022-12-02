@@ -70,6 +70,7 @@ public class UsersManager {
         }
         ArrayList<Integer> tmp = usersLists.get(user);
         tmp.remove(Integer.valueOf(id));
+        usersLists.put(user, tmp);
     }
 
     public synchronized void readIdsFile() throws Exception{
