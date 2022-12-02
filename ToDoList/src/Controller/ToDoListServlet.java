@@ -30,7 +30,7 @@ public class ToDoListServlet extends HttpServlet{
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+   /* protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException {
 
         try {
@@ -42,15 +42,13 @@ public class ToDoListServlet extends HttpServlet{
                 session.setMaxInactiveInterval(30*60);
                 String name = (String)session.getAttribute("name");
                 String title = request.getParameter("title");
-                list.add(title, "0");
-                users.addUsersList();
 
             }
         }
         catch(Exception e){
             e.printStackTrace();
         }
-    }
+    }*/
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
 
@@ -66,7 +64,7 @@ public class ToDoListServlet extends HttpServlet{
                 list.readFile();
                 users.readIdsFile();
 
-                LinkedHashMap<String, ArrayList<String>> l1 = list.getLists();
+                LinkedHashMap<Integer, ArrayList<String>> l1 = list.getLists();
                 LinkedHashMap<Integer, String> l2 = list.getListIds();
                 LinkedHashMap<String, ArrayList<Integer>> ids = users.getUsersLists();
 
@@ -76,7 +74,7 @@ public class ToDoListServlet extends HttpServlet{
 
                 for(int i = 0; i < myIds.size(); i++){
                     String title = l2.get(myIds.get(i));
-                    ArrayList<String> sub = l1.get(title);
+                    ArrayList<String> sub = l1.get(myIds.get(i));
                     myLists.put(title, sub);
                 }
 

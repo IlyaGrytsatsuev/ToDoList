@@ -8,21 +8,21 @@ import java.util.*;
 public class ToDoList {
     private final String path = "/Users/gratchuvalsky/Desktop/apache-tomcat-8.5.82/webapps/ToDoList/dataBase/Lists.txt";
 
-    private LinkedHashMap <String, ArrayList<String>> lists;
+    private LinkedHashMap <Integer, ArrayList<String>> lists;
     private LinkedHashMap <Integer, String> listIds;
     private ArrayList<Integer> id_numbers;
+    private UsersManager users;
 
 
-
-    public ToDoList(){
+    public ToDoList() throws Exception {
         lists = new LinkedHashMap<>();
         listIds = new LinkedHashMap<>();
         id_numbers = new ArrayList<>();
-
+        users = new UsersManager();
     }
 
 
-    public LinkedHashMap<String, ArrayList<String>> getLists(){
+    public LinkedHashMap<Integer, ArrayList<String>> getLists(){
         return lists;
     }
 
@@ -30,58 +30,82 @@ public class ToDoList {
         return listIds;
     }
 
-    public synchronized boolean add(String title, String sublist){
-        ArrayList<String> tmp = new ArrayList<>();
 
-        if(lists.size() == 0){
-            if (!sublist.equals("0")) {
-                tmp.add(sublist);
-            }
-            lists.put(title, tmp);
-            id_numbers.add(0);
-            listIds.put(0, title);
-        }
+    public synchronized boolean addSub(String user, int id, String sublist) throws Exception {
+        users.readIdsFile();
+        LinkedHashMap<String, ArrayList<Integer>> usersLists = users.getUsersLists();
 
-        else {
-            if(lists.containsKey(title)){
-                if(!lists.containsValue(sublist)) {
-                    tmp = lists.get(title);
-                    if (!sublist.equals("0")) {
-                        tmp.add(sublist);
-                    }
-                    lists.put(title, tmp);
+        ArrayList<Integer> UserListIds = usersLists.get(user);
+
+        if(UserListIds.contains(id)){
+            if(lists.containsKey(id)){
+                ArrayList<String> subs = lists.get(id);
+                if(!subs.contains(sublist)) {
+                    subs.add(sublist);
+                    lists.put(id, subs);
                 }
                 else
                     return false;
             }
-            else{
-                if (!sublist.equals("0")) {
-                    tmp.add(sublist);
-                }
-                lists.put(title, tmp);
-                listIds.put(id_numbers.get(id_numbers.size() - 1) + 1, title);
-                id_numbers.add(id_numbers.get(id_numbers.size() - 1) + 1);
+        }
+
+        else
+            return false;
+
+        return true;
+    }
+
+    public synchronized boolean addList(String user, String title) throws Exception {
+
+        ArrayList<String> tmp = new ArrayList<>();
+        users.readIdsFile();
+        LinkedHashMap<String, ArrayList<Integer>> usersLists = users.getUsersLists();
+
+        if(lists.size() == 0){
+            lists.put(0, tmp);
+            id_numbers.add(0);
+            listIds.put(0, title);
+            users.addUsersList(user, 0);
+            users.writeIdsFile();
+        }
+
+        else {
+            ArrayList<Integer> UserListIds = usersLists.get(user);
+            for(int i = 0; i < UserListIds.size(); i++){
+                String tmpTitle = listIds.get(UserListIds.get(i));
+                if(tmpTitle.equals(title))
+                    return false;
             }
 
+            int id = id_numbers.size();
+                    lists.put(id, tmp);
+                    id_numbers.add(id);
+                    listIds.put(id, title);
+                    users.addUsersList(user, id);
+                    users.writeIdsFile();
         }
         return true;
     }
 
-    public synchronized void delete(int titleId, int sublistId){
-        String key;
+    public synchronized void delete(String user, int titleId, int sublistId) throws Exception {
+        users.readIdsFile();
+        LinkedHashMap<String, ArrayList<Integer>> usersLists = users.getUsersLists();
+        ArrayList<Integer> UserListIds = usersLists.get(user);
+        int id = UserListIds.get(titleId);
+
+
         if(sublistId == -1){
-            key = listIds.get(titleId);
-            lists.remove(key);
-            listIds.remove(titleId);
-            id_numbers.remove(Integer.valueOf(titleId));
+            lists.remove(id);
+            listIds.remove(id);
+            id_numbers.remove(Integer.valueOf(id));
+            users.deleteUsersList(user, id);
+            users.writeIdsFile();
         }
 
         else{
-            key = listIds.get(titleId);
-            ArrayList<String> tmp = new ArrayList<>();
-            tmp = lists.get(key);
+            ArrayList<String> tmp = lists.get(id);
             tmp.remove(sublistId);
-            lists.put(key, tmp);
+            lists.put(id, tmp);
         }
 
     }
@@ -113,7 +137,7 @@ public class ToDoList {
 
                 id_numbers.add(id);
                 listIds.put(id, title);
-                lists.put(title, tmp);
+                lists.put(id, tmp);
             }
             sc.close();
 
@@ -137,7 +161,7 @@ public class ToDoList {
 
             for(int key : listIds.keySet()){
                 out.write(key + ":" + listIds.get(key) + ":");
-                ArrayList<String> tmp = lists.get(listIds.get(key));
+                ArrayList<String> tmp = lists.get(key);
                 for(int i = 0; i < tmp.size(); i++){
 
                     if(i == tmp.size()-1)

@@ -1,3 +1,2 @@
-0:cars:car 1:car2:car 3
-1:bikes:bike 1:bike 2:bike 3
-2:houses:
+0:cars:car 1:car 2
+1:houses:house 2

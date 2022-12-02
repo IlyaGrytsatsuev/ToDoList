@@ -8,15 +8,19 @@ public class test {
     public static void main(String[] args) throws Exception {
 
         ToDoList l = new ToDoList();
-        l.add("cars", "car 1");
-        l.add("cars", "car 3");
+        l.addList("Andrew", "cars");
+        l.addList("Ann", "houses");
+        l.addList("Andrew", "houses");
+
+
+       /* l.addSub("cars", "car 3");
 
         l.add("bikes", "bike 1");
         l.add("bikes", "bike 2");
         l.add("bikes", "bike 3");
 
         l.add("house", "house 1");
-        l.add("house", "house 3");
+        l.add("house", "house 3");*/
 
         l.writeFile();
         /*l.readFile();
