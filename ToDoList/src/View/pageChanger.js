@@ -53,7 +53,7 @@ function stopSharing(id){
 }
 
 
-function shareDone(size){
+function shareDone(){
     var xhr = new XMLHttpRequest();
     if(contributorName != null && contributorName != "" && shareIds != null && shareIds.length != 0){
 
@@ -69,12 +69,7 @@ function shareDone(size){
 
         xhr.onreadystatechange = function(){
             if(this.readyState == 4 && this.status == 200){
-                $("#DoneButton").hide();
-                $("#ShowShareInputButton").show();
-                for(i = 0; i < size; i++){
-                    $("#" + i + "Checkbox").hide();
-                }
-
+                location.reload();
                 contributorName = "";
                 shareIds = [];
             }
@@ -86,6 +81,10 @@ function shareDone(size){
         xhr.send(data);
 
     }
+    else
+        location.reload();
+
+    
 
 
 }
@@ -260,3 +259,4 @@ function ShowNavButtons(){
     
     
 }
+

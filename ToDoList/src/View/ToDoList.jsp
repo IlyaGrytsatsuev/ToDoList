@@ -16,7 +16,7 @@
       String name = (String)session.getAttribute("name");
 
      LinkedHashMap<String, ArrayList<String>> lists = (LinkedHashMap<String, ArrayList<String>>)request.getAttribute("lists");
-     ArrayList<String> sharedLists = (ArrayList<String>)request.getAttribute("sharedLists");
+     ArrayList<Boolean> sharedLists = (ArrayList<Boolean>)request.getAttribute("sharedLists");
 
      Set<String> keySet = lists.keySet();
      List<String> listKeys = new ArrayList<String>(keySet);
@@ -94,9 +94,11 @@
 
                 <input type="button" class="button" id="<%=j%>ListDeleteButton" value="Delete" onclick="DeleteList(<%=j%>)"/>
                 <input type="button" class="button" id="<%=j%>AddButton" value="Add" onclick="showAddSubList(<%=j%>)"/>
-
+                <%if(sharedLists.size() > 0){
+                  if(sharedLists.get(j)==true){%>
                   <input type="button" class="button" id="<%=j%>stopSharingButton" value="Stop Sharing" onclick="stopSharing(<%=j%>)"/>
-
+                <%}
+                }%>
                 <div id="<%=j%>SubText"hidden>
                   <input type="text" id="<%=j%>SubTextInput" />
                   <input id="<%=j%>SubAddButton" class="ListAddButton" type="button" value="Submit" onclick="addSubList(<%=j%>)"><br>  

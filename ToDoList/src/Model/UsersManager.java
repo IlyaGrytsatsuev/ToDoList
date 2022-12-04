@@ -210,9 +210,6 @@ public class UsersManager {
             String user;
             String owner;
 
-
-
-
             while (sc.hasNextLine()) {
                 ArrayList<Integer> sharedIds = new ArrayList<>() ;
                 ArrayList<Integer> ownersIds = new ArrayList<>();
