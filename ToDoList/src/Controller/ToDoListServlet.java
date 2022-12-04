@@ -82,15 +82,21 @@ public class ToDoListServlet extends HttpServlet{
                 String name = (String)session.getAttribute("name");
                 String destinationUser = request.getParameter("user");
                 String ids = request.getParameter("ids");
-                if(ids.length() > 1) {
-                    String[] tmp = ids.split(":");
+
+                String[] tmp = ids.split(":");
                     for (int i = 0; i < tmp.length; i++) {
                         int id = Integer.parseInt(tmp[i]);
                         list.shareList(name, id, destinationUser);
                     }
-                }
-                else
-                    list.shareList(name, Integer.parseInt(ids), destinationUser);
+
+            }
+
+            if(state.equals("stopSharing")){
+                HttpSession session = request.getSession();
+                session.setMaxInactiveInterval(30*60);
+                String name = (String)session.getAttribute("name");
+                int id = Integer.parseInt(request.getParameter("id"));
+                list.stopSharing(name, id);
 
             }
         }
@@ -111,17 +117,21 @@ public class ToDoListServlet extends HttpServlet{
 
             else {
                 list.readAllFiles();
+                users.readAll();
 
                 LinkedHashMap<Integer, ArrayList<String>> l1 = list.getLists();
                 LinkedHashMap<Integer, String> l2 = list.getListIds();
                 LinkedHashMap<String, ArrayList<Integer>> ids = users.getUsersLists();
-                /*LinkedHashMap<String, ArrayList<Integer>> sharedLists = users.getSharedLists();
-                LinkedHashMap<String, ArrayList<Integer>> sharedListsOwners = users.getSharedLists();*/
+                LinkedHashMap<String, ArrayList<Integer>> sharedLists = users.getSharedLists();
+                LinkedHashMap<String, ArrayList<Integer>> sharedListsOwners = users.getSharedLists();
 
 
                 ArrayList<Integer> myIds = ids.get(name);
                 LinkedHashMap<String, ArrayList<String>> myLists = new LinkedHashMap<>();
-                //ArrayList<Integer> mySharedIds = .get(name);
+                ArrayList<Integer> mySharedIds = sharedListsOwners.get(name);
+                ArrayList<String> mySharedLists = new ArrayList<>();
+
+
 
                 for(int i = 0; i < myIds.size(); i++){
                     String title = l2.get(myIds.get(i));
@@ -129,10 +139,23 @@ public class ToDoListServlet extends HttpServlet{
                     myLists.put(title, sub);
                 }
 
+                for(int i = 0; i < mySharedIds.size(); i++){
+                    String title = l2.get(mySharedIds.get(i));
+                    mySharedLists.add(title);
+                }
+
+
+               /* for(int i = 0; i < myIds.size(); i++) {
+                    if(mySharedIds.contains(myIds.get(i)))
+                        mySharedLists.add(true);
+                    else
+                        mySharedLists.add(false);
+
+                }*/
 
                 request.setAttribute("session", session);
                 request.setAttribute("lists", myLists);
-                //request.setAttribute("listIds", l2);
+                request.setAttribute("sharedLists", mySharedLists);
 
 
                 RequestDispatcher rd = request.getRequestDispatcher("/src/View/ToDoList.jsp");

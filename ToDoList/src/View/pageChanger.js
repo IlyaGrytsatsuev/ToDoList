@@ -36,6 +36,23 @@ function showCheckBoxes(size){
 }
 
 
+function stopSharing(id){
+    var xhr = new XMLHttpRequest();
+    var data =  "state=stopSharing"  + "&" + "id=" + id;
+    xhr.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            location.reload();
+        }
+
+    }
+
+    xhr.open("POST", "/ToDoList/ToDoList", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(data);
+
+}
+
+
 function shareDone(size){
     var xhr = new XMLHttpRequest();
     if(contributorName != null && contributorName != "" && shareIds != null && shareIds.length != 0){
@@ -134,11 +151,11 @@ function showList(id){
     var button = document.getElementById(id + "OpenButton");
     if($(sub).is(":hidden")){
         $(sub).show();
-        button.value = "Close";
+        //button.value = "Close";
    }
     else{
         $(sub).hide();
-        button.value = "Open";
+        //button.value = "Open";
     }
 }
 

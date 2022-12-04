@@ -76,7 +76,6 @@ public class SharedListsServlet extends HttpServlet{
             }
 
 
-
         }
         catch(Exception e){
             e.printStackTrace();
