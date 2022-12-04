@@ -1,3 +1,3 @@
-Andrew:
+Andrew:Ann=0
 Vasya:
 Ann:Andrew=1

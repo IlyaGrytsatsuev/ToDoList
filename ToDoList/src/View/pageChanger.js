@@ -185,6 +185,29 @@ function addSubList(id){
 
 }
 
+function addSharedSubList(name, id){
+
+    var xhr = new XMLHttpRequest();
+    var title = document.getElementById(id + "SubTextInput").value;
+
+    if(title != "" && title != null){
+
+         var data =  "state=addSharedSubList"  + "&" + "name=" + name + "&" + "id=" + id + "&" + "title=" + title;
+
+        xhr.onreadystatechange = function(){
+            if(this.readyState == 4 && this.status == 200){
+                location.reload();
+            }
+
+        }
+
+        xhr.open("POST", "/ToDoList/Shared", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(data);
+    }
+
+}
+
 function DeleteSubList(i, j){
     var xhr = new XMLHttpRequest();
     var data =  "state=deleteSubList" + "&" + "titleId=" + i + "&" + "subId=" + j;
@@ -196,6 +219,22 @@ function DeleteSubList(i, j){
     }
 
     xhr.open("POST", "/ToDoList/ToDoList", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(data);
+
+}
+
+function DeleteSharedSubList(name, i, j){
+    var xhr = new XMLHttpRequest();
+    var data =  "state=deleteSharedSubList"  + "&" + "name=" + name + "&" + "titleId=" + i + "&" + "subId=" + j;
+
+    xhr.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            location.reload();
+        }
+    }
+
+    xhr.open("POST", "/ToDoList/Shared", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send(data);
 

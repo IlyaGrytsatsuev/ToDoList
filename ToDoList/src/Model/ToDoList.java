@@ -25,44 +25,44 @@ public class ToDoList {
     public synchronized void shareList(String user, int id, String destinationUser) throws Exception {
 
 
-        ArrayList<Integer> ids = users.getUsersLists().get(user);
-        int commonId = ids.get(id);
+        if(!destinationUser.equals(user)) {
+            ArrayList<Integer> ids = users.getUsersLists().get(user);
+            int commonId = ids.get(id);
 
-        if(!users.getSharedLists().keySet().equals(users.getUsersAuth().keySet())) {
-            for (String key : users.getUsersAuth().keySet()) {
-                ArrayList<Integer> a = new ArrayList<>();
-                if (!users.getSharedLists().containsKey(key))
-                    users.setSharedLists(key, a);
-            }
-        }
-
-        if(!users.getSharedListsOwners().keySet().equals(users.getUsersAuth().keySet())){
-            for(String key : users.getUsersAuth().keySet()){
-                ArrayList<Integer> a = new ArrayList<>();
-                if(!users.getSharedListsOwners().containsKey(key))
-                    users.setSharedListsOwners(key, a);
+            if (!users.getSharedLists().keySet().equals(users.getUsersAuth().keySet())) {
+                for (String key : users.getUsersAuth().keySet()) {
+                    ArrayList<Integer> a = new ArrayList<>();
+                    if (!users.getSharedLists().containsKey(key))
+                        users.setSharedLists(key, a);
+                }
             }
 
+            if (!users.getSharedListsOwners().keySet().equals(users.getUsersAuth().keySet())) {
+                for (String key : users.getUsersAuth().keySet()) {
+                    ArrayList<Integer> a = new ArrayList<>();
+                    if (!users.getSharedListsOwners().containsKey(key))
+                        users.setSharedListsOwners(key, a);
+                }
+
+            }
+
+            ArrayList<Integer> tmp2 = users.getSharedLists().get(destinationUser);
+            ArrayList<Integer> tmp3 = users.getSharedListsOwners().get(user);
+
+
+            if (tmp2 == null)
+                tmp2 = new ArrayList<>();
+
+            if (tmp3 == null)
+                tmp3 = new ArrayList<>();
+
+            tmp2.add(commonId);
+            users.setSharedLists(destinationUser, tmp2);
+            tmp3.add(commonId);
+            users.setSharedListsOwners(user, tmp3);
+
+            users.writeAll();
         }
-
-        ArrayList<Integer> tmp2 = users.getSharedLists().get(destinationUser);
-        ArrayList<Integer> tmp3 = users.getSharedListsOwners().get(user);
-
-
-
-
-        if(tmp2 == null)
-            tmp2 = new ArrayList<>();
-
-        if(tmp3 == null)
-            tmp3 = new ArrayList<>();
-
-        tmp2.add(commonId);
-        users.setSharedLists(destinationUser, tmp2);
-        tmp3.add(commonId);
-        users.setSharedListsOwners(user, tmp3);
-
-        users.writeAll();
     }
 
 

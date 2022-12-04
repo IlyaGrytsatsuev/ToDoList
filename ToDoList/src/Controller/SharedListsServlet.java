@@ -39,23 +39,43 @@ public class SharedListsServlet extends HttpServlet{
             String state = request.getParameter("state");
 
 
-            if(state.equals("addSubList")){
+
+            if(state.equals("addSharedSubList")){
+
                 HttpSession session = request.getSession();
                 session.setMaxInactiveInterval(30*60);
-                String name = (String)session.getAttribute("name");
+                String user = (String)session.getAttribute("name");
+
+                String name = request.getParameter("name");
                 int id = Integer.parseInt(request.getParameter("id"));
                 String title = request.getParameter("title");
-                list.addSub(name, id, title);
+
+                LinkedHashMap<String, ArrayList<Integer>> sharedLists = users.getSharedLists();
+                ArrayList<Integer> sharedIds = sharedLists.get(user);
+                LinkedHashMap<String, ArrayList<Integer>> usersLists = users.getUsersLists();
+                ArrayList<Integer> UserListIds = usersLists.get(name);
+                int index = UserListIds.indexOf(sharedIds.get(id));
+
+                list.addSub(name, index, title);
                 list.writeFile();
             }
 
-            if(state.equals("deleteSubList")){
+            if(state.equals("deleteSharedSubList")){
                 HttpSession session = request.getSession();
                 session.setMaxInactiveInterval(30*60);
-                String name = (String)session.getAttribute("name");
+                String user = (String)session.getAttribute("name");
+
+                String name = request.getParameter("name");
                 int titleId = Integer.parseInt(request.getParameter("titleId"));
                 int subId = Integer.parseInt(request.getParameter("subId"));
-                list.delete(name, titleId, subId);
+
+                LinkedHashMap<String, ArrayList<Integer>> sharedLists = users.getSharedLists();
+                ArrayList<Integer> sharedIds = sharedLists.get(user);
+                LinkedHashMap<String, ArrayList<Integer>> usersLists = users.getUsersLists();
+                ArrayList<Integer> UserListIds = usersLists.get(name);
+                int index = UserListIds.indexOf(sharedIds.get(titleId));
+
+                list.delete(name, index, subId);
                 list.writeFile();
             }
 
