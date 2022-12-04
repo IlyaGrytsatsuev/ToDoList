@@ -1,6 +1,8 @@
 
 var cur_page ;
 var pages_num ;
+var contributorName;
+var shareIds = [];
 
 
 $("#NewButton").click(function() {
@@ -10,6 +12,81 @@ $("#NewButton").click(function() {
   $("#ListAddButton").click(function() {
     AddNewList();
   });
+
+  $("#ShowShareInputButton").click(function() {
+    $("#ShareInput").show();
+    $("#ShowShareInputButton").hide();
+  });
+
+function showShareInput(){
+
+}
+
+function showCheckBoxes(size){
+    contributorName = document.getElementById("ContributorInput").value;
+    if(contributorName != null && contributorName != ""){
+
+        for(i = 0; i < size; i++)
+            $("#" + i + "Checkbox").show();
+
+        $("#ShareInput").hide();
+        $("#DoneButton").show();
+    }
+    
+}
+
+
+function shareDone(size){
+    var xhr = new XMLHttpRequest();
+    if(contributorName != null && contributorName != "" && shareIds != null && shareIds.length != 0){
+
+        var ids = "";
+        for( i = 0; i < shareIds.length; i++){
+            if(i==shareIds.length - 1)
+                ids = ids + shareIds[i].toString();
+            else
+                ids = ids + shareIds[i].toString() + ":";
+
+        }
+        var data =  "state=ShareList"  + "&" + "user="+ contributorName + "&" + "ids=" + ids;
+
+        xhr.onreadystatechange = function(){
+            if(this.readyState == 4 && this.status == 200){
+                $("#DoneButton").hide();
+                $("#ShowShareInputButton").show();
+                for(i = 0; i < size; i++){
+                    $("#" + i + "Checkbox").hide();
+                }
+
+                contributorName = "";
+                shareIds = [];
+            }
+
+        }
+
+        xhr.open("POST", "/ToDoList/ToDoList", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(data);
+
+    }
+
+
+}
+
+
+
+function shareListsChoose(id){
+
+
+    if(document.getElementById(id + "CheckboxVal").checked)
+        shareIds.push(id);
+    
+    else
+        shareIds.splice(indexOf(id));
+
+
+}
+
 
 
 function AddNewList(){

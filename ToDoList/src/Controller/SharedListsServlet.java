@@ -1,6 +1,10 @@
 package Controller;
 
-import Model.*;
+import Model.ToDoList;
+import Model.UsersManager;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -13,10 +17,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import javax.servlet.http.Cookie;
 
-
-import java.util.ArrayList;
-
-public class ToDoListServlet extends HttpServlet{
+public class SharedListsServlet extends HttpServlet{
 
     private ToDoList list;
     private UsersManager users;
@@ -34,9 +35,7 @@ public class ToDoListServlet extends HttpServlet{
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
         try {
-            ///list.readFile();
             list.readAllFiles();
-            //users.readIdsFile();
             String state = request.getParameter("state");
             if(state.equals("AddList")){
                 HttpSession session = request.getSession();
@@ -76,23 +75,8 @@ public class ToDoListServlet extends HttpServlet{
                 list.writeFile();
             }
 
-            if(state.equals("ShareList")){
-                HttpSession session = request.getSession();
-                session.setMaxInactiveInterval(30*60);
-                String name = (String)session.getAttribute("name");
-                String destinationUser = request.getParameter("user");
-                String ids = request.getParameter("ids");
-                if(ids.length() > 1) {
-                    String[] tmp = ids.split(":");
-                    for (int i = 0; i < tmp.length; i++) {
-                        int id = Integer.parseInt(tmp[i]);
-                        list.shareList(name, id, destinationUser);
-                    }
-                }
-                else
-                    list.shareList(name, Integer.parseInt(ids), destinationUser);
 
-            }
+
         }
         catch(Exception e){
             e.printStackTrace();
@@ -111,31 +95,26 @@ public class ToDoListServlet extends HttpServlet{
 
             else {
                 list.readAllFiles();
+                users.readAll();
 
-                LinkedHashMap<Integer, ArrayList<String>> l1 = list.getLists();
-                LinkedHashMap<Integer, String> l2 = list.getListIds();
-                LinkedHashMap<String, ArrayList<Integer>> ids = users.getUsersLists();
-                /*LinkedHashMap<String, ArrayList<Integer>> sharedLists = users.getSharedLists();
-                LinkedHashMap<String, ArrayList<Integer>> sharedListsOwners = users.getSharedLists();*/
-
-
-                ArrayList<Integer> myIds = ids.get(name);
+                LinkedHashMap<String, ArrayList<Integer>> sharedLists = users.getSharedLists();
+                LinkedHashMap<Integer, ArrayList<String>> allSubLists = list.getLists();
+                LinkedHashMap<Integer, String> allTitles = list.getListIds();
+                ArrayList<Integer> mySharedIds = sharedLists.get(name);
                 LinkedHashMap<String, ArrayList<String>> myLists = new LinkedHashMap<>();
-                //ArrayList<Integer> mySharedIds = .get(name);
 
-                for(int i = 0; i < myIds.size(); i++){
-                    String title = l2.get(myIds.get(i));
-                    ArrayList<String> sub = l1.get(myIds.get(i));
+
+                for(int i = 0; i < mySharedIds.size(); i++){
+                    String title = allTitles.get(mySharedIds.get(i));
+                    ArrayList<String> sub = allSubLists.get(mySharedIds.get(i));
                     myLists.put(title, sub);
                 }
 
 
                 request.setAttribute("session", session);
                 request.setAttribute("lists", myLists);
-                //request.setAttribute("listIds", l2);
 
-
-                RequestDispatcher rd = request.getRequestDispatcher("/src/View/ToDoList.jsp");
+                RequestDispatcher rd = request.getRequestDispatcher("/src/View/Shared.jsp");
                 rd.forward(request, response);
             }
 
@@ -144,6 +123,4 @@ public class ToDoListServlet extends HttpServlet{
             e.printStackTrace();
         }
     }
-
-
 }
