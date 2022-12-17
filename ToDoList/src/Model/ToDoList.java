@@ -25,7 +25,7 @@ public class ToDoList {
     public synchronized void shareList(String user, int id, String destinationUser) throws Exception {
 
 
-        if(!destinationUser.equals(user)) {
+        if(!destinationUser.equals(user) && users.getUsersAuth().containsKey(destinationUser)) {
             ArrayList<Integer> ids = users.getUsersLists().get(user);
             int commonId = ids.get(id);
 
